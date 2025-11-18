@@ -3,7 +3,7 @@
 export interface Product {
   id: string;
   name: string;
-  category: 'wizytowki' | 'ulotki' | 'plakaty' | 'banery' | 'naklejki' | 'zaproszenia';
+  category: 'wizytowki' | 'banery';
   width: number;  // mm
   height: number; // mm
   price: number;  // PLN
