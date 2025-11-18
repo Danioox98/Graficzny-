@@ -1,14 +1,31 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Header } from './components/Header';
 import { Toolbar } from './components/Toolbar';
 import { PropertiesPanel } from './components/PropertiesPanel';
 import { ProductSelector } from './components/ProductSelector';
 import { EditorCanvas } from './editor/EditorCanvas';
+import { WelcomeScreen } from './components/WelcomeScreen';
 import { useEditorStore, useUIStore } from './utils/store';
 
 function App() {
   const { currentProduct } = useEditorStore();
   const { notification, hideNotification } = useUIStore();
+  const [showWelcome, setShowWelcome] = useState(false);
+
+  // Sprawdź czy pokazać ekran powitalny
+  useEffect(() => {
+    if (currentProduct) {
+      const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
+      if (!hasSeenWelcome) {
+        setShowWelcome(true);
+      }
+    }
+  }, [currentProduct]);
+
+  const handleCloseWelcome = () => {
+    setShowWelcome(false);
+    localStorage.setItem('hasSeenWelcome', 'true');
+  };
 
   // Ukryj powiadomienia po 3 sekundach
   useEffect(() => {
@@ -35,6 +52,9 @@ function App() {
       </div>
 
       <PropertiesPanel />
+
+      {/* Welcome Screen */}
+      {showWelcome && <WelcomeScreen onClose={handleCloseWelcome} />}
 
       {/* Notification Toast */}
       {notification && (

@@ -49,6 +49,28 @@ export const PropertiesPanel: React.FC = () => {
     setProperties({ ...properties, [key]: value });
   };
 
+  const applyTextStyle = (style: { fontSize: number; fontWeight: string; fontFamily?: string }) => {
+    if (!canvas || selectedObjects.length !== 1) return;
+
+    const obj = selectedObjects[0];
+    if (obj.type !== 'i-text' && obj.type !== 'text') return;
+
+    (obj as any).fontSize = style.fontSize;
+    (obj as any).fontWeight = style.fontWeight;
+    if (style.fontFamily) {
+      (obj as any).fontFamily = style.fontFamily;
+    }
+
+    obj.setCoords();
+    canvas.renderAll();
+    setProperties({
+      ...properties,
+      fontSize: style.fontSize,
+      fontWeight: style.fontWeight,
+      ...(style.fontFamily ? { fontFamily: style.fontFamily } : {}),
+    });
+  };
+
   if (selectedObjects.length === 0) {
     return (
       <div className="editor-sidebar-right bg-white p-4 space-y-4">
@@ -185,6 +207,35 @@ export const PropertiesPanel: React.FC = () => {
                 />
               </div>
             )}
+
+            {/* Paleta kolorów firmowych */}
+            <div className="mt-3 p-3 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-200">
+              <label className="block text-xs font-semibold text-gray-700 mb-2">🎨 Kolory firmowe</label>
+              <div className="grid grid-cols-6 gap-2">
+                {[
+                  { color: '#000000', label: 'Czarny' },
+                  { color: '#ffffff', label: 'Biały' },
+                  { color: '#3b82f6', label: 'Niebieski' },
+                  { color: '#10b981', label: 'Zielony' },
+                  { color: '#f59e0b', label: 'Pomarańczowy' },
+                  { color: '#ef4444', label: 'Czerwony' },
+                  { color: '#8b5cf6', label: 'Fioletowy' },
+                  { color: '#ec4899', label: 'Różowy' },
+                  { color: '#6b7280', label: 'Szary' },
+                  { color: '#0ea5e9', label: 'Błękitny' },
+                  { color: '#14b8a6', label: 'Turkusowy' },
+                  { color: '#f97316', label: 'Bursztynowy' },
+                ].map((item) => (
+                  <button
+                    key={item.color}
+                    onClick={() => updateProperty('fill', item.color)}
+                    className="w-8 h-8 rounded border-2 border-gray-300 hover:border-gray-500 transition-all hover:scale-110"
+                    style={{ backgroundColor: item.color }}
+                    title={item.label}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
@@ -215,6 +266,37 @@ export const PropertiesPanel: React.FC = () => {
                 className="input text-sm"
                 rows={3}
               />
+            </div>
+
+            {/* Presety stylów tekstu */}
+            <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-3 rounded-lg border border-purple-200">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">⚡ Szybkie style</label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => applyTextStyle({ fontSize: 48, fontWeight: 'bold', fontFamily: 'Arial' })}
+                  className="px-3 py-2 text-xs bg-white hover:bg-purple-100 rounded border border-purple-200 transition-colors"
+                >
+                  Nagłówek
+                </button>
+                <button
+                  onClick={() => applyTextStyle({ fontSize: 24, fontWeight: 'bold', fontFamily: 'Arial' })}
+                  className="px-3 py-2 text-xs bg-white hover:bg-purple-100 rounded border border-purple-200 transition-colors"
+                >
+                  Podtytuł
+                </button>
+                <button
+                  onClick={() => applyTextStyle({ fontSize: 14, fontWeight: 'normal', fontFamily: 'Arial' })}
+                  className="px-3 py-2 text-xs bg-white hover:bg-purple-100 rounded border border-purple-200 transition-colors"
+                >
+                  Treść
+                </button>
+                <button
+                  onClick={() => applyTextStyle({ fontSize: 10, fontWeight: 'normal', fontFamily: 'Arial' })}
+                  className="px-3 py-2 text-xs bg-white hover:bg-purple-100 rounded border border-purple-200 transition-colors"
+                >
+                  Mały tekst
+                </button>
+              </div>
             </div>
 
             <div>

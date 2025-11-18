@@ -1,13 +1,43 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Download, Save, Undo, Redo, ZoomIn, ZoomOut, Grid, ShoppingCart, ArrowLeft } from 'lucide-react';
 import { useEditorStore, useCartStore, useUIStore } from '@/utils/store';
 import { ExportDialog } from './ExportDialog';
 
 export const Header: React.FC = () => {
-  const { zoom, setZoom, undo, redo, history, historyIndex, toggleGrid, showGrid, currentProduct, setCurrentProduct } = useEditorStore();
+  const { zoom, setZoom, undo, redo, history, historyIndex, toggleGrid, showGrid, currentProduct, setCurrentProduct, canvas } = useEditorStore();
   const { items } = useCartStore();
   const { showNotification } = useUIStore();
   const [showExportDialog, setShowExportDialog] = useState(false);
+  const [lastSaved, setLastSaved] = useState<string>('');
+
+  // Autosave co 30 sekund
+  useEffect(() => {
+    if (!canvas) return;
+
+    const saveToLocalStorage = () => {
+      try {
+        const json = JSON.stringify(canvas.toJSON());
+        localStorage.setItem('autosave_canvas', json);
+        localStorage.setItem('autosave_product', JSON.stringify(currentProduct));
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+        setLastSaved(timeStr);
+      } catch (error) {
+        console.error('Błąd podczas autosave:', error);
+      }
+    };
+
+    // Pierwsze zapisanie po 5 sekundach
+    const initialTimeout = setTimeout(saveToLocalStorage, 5000);
+
+    // Następnie co 30 sekund
+    const interval = setInterval(saveToLocalStorage, 30000);
+
+    return () => {
+      clearTimeout(initialTimeout);
+      clearInterval(interval);
+    };
+  }, [canvas, currentProduct]);
 
   const handleZoomIn = () => {
     if (zoom < 3) setZoom(zoom + 0.1);
@@ -102,10 +132,17 @@ export const Header: React.FC = () => {
         <div className="w-px h-6 bg-gray-300 mx-2" />
 
         {/* Save & Export */}
-        <button onClick={handleSave} className="btn btn-secondary" title="Zapisz projekt">
-          <Save size={18} className="mr-2" />
-          Zapisz
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={handleSave} className="btn btn-secondary" title="Zapisz projekt">
+            <Save size={18} className="mr-2" />
+            Zapisz
+          </button>
+          {lastSaved && (
+            <span className="text-xs text-gray-500">
+              Zapisano {lastSaved}
+            </span>
+          )}
+        </div>
         <button onClick={handleExport} className="btn btn-primary" title="Eksportuj do PDF">
           <Download size={18} className="mr-2" />
           Eksportuj PDF
