@@ -49,3 +49,10 @@ tmp/
 # Testing
 coverage/
 .nyc_output/
+
+# Access Keys (WAŻNE: Nie wrzucaj kluczy do repozytorium!)
+access-keys/
+*.csv
+access-keys/*.json
+access-keys/*.txt
+access-keys/*.csv
