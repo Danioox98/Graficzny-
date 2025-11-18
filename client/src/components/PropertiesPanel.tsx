@@ -47,12 +47,26 @@ export const PropertiesPanel: React.FC = () => {
     if (key === 'width' || key === 'height') {
       const scale = key === 'width' ? value / obj.width! : value / obj.height!;
       obj.scale(scale);
+    } else if (key === 'fill' && (obj.type === 'i-text' || obj.type === 'text' || obj.type === 'textbox')) {
+      // Specjalna obsługa koloru dla tekstu
+      (obj as any).set('fill', value);
+      // Wymuś aktualizację wszystkich znaków dla i-text
+      if (obj.type === 'i-text' || obj.type === 'textbox') {
+        const text = (obj as any).text;
+        const textLength = text ? text.length : 0;
+        (obj as any).setSelectionStart(0);
+        (obj as any).setSelectionEnd(textLength);
+        (obj as any).setSelectionStyles({ fill: value });
+        (obj as any).setSelectionStart(textLength);
+        (obj as any).setSelectionEnd(textLength);
+        (obj as any).exitEditing();
+      }
     } else {
       (obj as any)[key] = value;
     }
 
     obj.setCoords();
-    canvas.renderAll();
+    canvas.requestRenderAll(); // Użyj requestRenderAll dla lepszej wydajności
     setProperties({ ...properties, [key]: value });
   };
 
@@ -86,7 +100,7 @@ export const PropertiesPanel: React.FC = () => {
     }
 
     img.applyFilters();
-    canvas.renderAll();
+    canvas.requestRenderAll();
 
     setImageFilters({ ...imageFilters, [filterType]: value });
   };
@@ -104,7 +118,7 @@ export const PropertiesPanel: React.FC = () => {
     }
 
     obj.setCoords();
-    canvas.renderAll();
+    canvas.requestRenderAll();
     setProperties({
       ...properties,
       fontSize: style.fontSize,
@@ -321,7 +335,7 @@ export const PropertiesPanel: React.FC = () => {
                   } else {
                     (obj as any).shadow = null;
                   }
-                  canvas?.renderAll();
+                  canvas?.requestRenderAll();
                 }}
                 className="rounded"
               />
@@ -340,7 +354,7 @@ export const PropertiesPanel: React.FC = () => {
                     onChange={(e) => {
                       const obj = selectedObjects[0];
                       (obj as any).shadow.blur = parseInt(e.target.value);
-                      canvas?.renderAll();
+                      canvas?.requestRenderAll();
                     }}
                     className="w-full"
                   />
@@ -354,7 +368,7 @@ export const PropertiesPanel: React.FC = () => {
                       onChange={(e) => {
                         const obj = selectedObjects[0];
                         (obj as any).shadow.offsetX = parseInt(e.target.value);
-                        canvas?.renderAll();
+                        canvas?.requestRenderAll();
                       }}
                       className="input text-sm"
                     />
@@ -367,7 +381,7 @@ export const PropertiesPanel: React.FC = () => {
                       onChange={(e) => {
                         const obj = selectedObjects[0];
                         (obj as any).shadow.offsetY = parseInt(e.target.value);
-                        canvas?.renderAll();
+                        canvas?.requestRenderAll();
                       }}
                       className="input text-sm"
                     />
@@ -393,7 +407,7 @@ export const PropertiesPanel: React.FC = () => {
                     (obj as any).stroke = undefined;
                     (obj as any).strokeWidth = 0;
                   }
-                  canvas?.renderAll();
+                  canvas?.requestRenderAll();
                 }}
                 className="rounded"
               />
@@ -410,7 +424,7 @@ export const PropertiesPanel: React.FC = () => {
                       onChange={(e) => {
                         const obj = selectedObjects[0];
                         (obj as any).stroke = e.target.value;
-                        canvas?.renderAll();
+                        canvas?.requestRenderAll();
                       }}
                       className="w-10 h-10 rounded border-2 border-gray-300"
                     />
@@ -420,7 +434,7 @@ export const PropertiesPanel: React.FC = () => {
                       onChange={(e) => {
                         const obj = selectedObjects[0];
                         (obj as any).stroke = e.target.value;
-                        canvas?.renderAll();
+                        canvas?.requestRenderAll();
                       }}
                       className="input text-sm flex-1"
                     />
@@ -438,7 +452,7 @@ export const PropertiesPanel: React.FC = () => {
                     onChange={(e) => {
                       const obj = selectedObjects[0];
                       (obj as any).strokeWidth = parseInt(e.target.value);
-                      canvas?.renderAll();
+                      canvas?.requestRenderAll();
                     }}
                     className="w-full"
                   />
@@ -523,7 +537,7 @@ export const PropertiesPanel: React.FC = () => {
                   const img = selectedObjects[0] as fabric.Image;
                   img.filters = [];
                   img.applyFilters();
-                  canvas?.renderAll();
+                  canvas?.requestRenderAll();
                 }}
                 className="w-full btn btn-secondary text-sm py-2"
               >

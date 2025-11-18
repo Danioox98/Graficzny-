@@ -28,6 +28,14 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ width, height }) => 
       height: canvasHeight,
       backgroundColor: '#ffffff',
       preserveObjectStacking: true,
+      selection: true,
+      // Ułatwienia zaznaczania - większa tolerancja na kliknięcia
+      targetFindTolerance: 8, // Większa tolerancja dla łatwiejszego zaznaczania
+      perPixelTargetFind: true, // Precyzyjne wykrywanie obiektów
+      // Płynniejsze renderowanie
+      renderOnAddRemove: true,
+      // Lepsze zachowanie dla tekstów
+      enableRetinaScaling: true,
     });
 
     // Ustawienie canvas w store
@@ -62,6 +70,36 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ width, height }) => 
 
     fabricCanvas.on('object:added', () => {
       addToHistory(JSON.stringify(fabricCanvas.toJSON()));
+    });
+
+    // Ulepszenie zaznaczania tekstu - zapobiegaj natychmiastowej edycji
+    let lastClickTime = 0;
+    let lastClickedObject: fabric.Object | null = null;
+
+    fabricCanvas.on('mouse:down', (e: fabric.IEvent) => {
+      const target = e.target;
+      const now = Date.now();
+
+      if (target && (target.type === 'i-text' || target.type === 'text' || target.type === 'textbox')) {
+        // Sprawdź czy to podwójne kliknięcie (mniej niż 400ms)
+        const isDoubleClick = (now - lastClickTime < 400) && (target === lastClickedObject);
+
+        if (!isDoubleClick) {
+          // Pojedyncze kliknięcie - tylko zaznacz, nie edytuj
+          if ((target as any).isEditing) {
+            (target as any).exitEditing();
+          }
+          fabricCanvas.setActiveObject(target);
+          fabricCanvas.requestRenderAll();
+        }
+        // Podwójne kliknięcie automatycznie wejdzie w tryb edycji
+
+        lastClickTime = now;
+        lastClickedObject = target;
+      } else {
+        lastClickTime = 0;
+        lastClickedObject = null;
+      }
     });
 
     // Dodaj początkowy stan do historii

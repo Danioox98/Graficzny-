@@ -77,7 +77,7 @@ export const Header: React.FC = () => {
       obj.set({ left: leftmost });
       obj.setCoords();
     });
-    canvas.renderAll();
+    canvas.requestRenderAll();
     showNotification('✓ Wyrównano do lewej', 'success');
   };
 
@@ -91,7 +91,7 @@ export const Header: React.FC = () => {
       obj.set({ left: centerX - ((obj.width || 0) / 2) });
       obj.setCoords();
     });
-    canvas.renderAll();
+    canvas.requestRenderAll();
     showNotification('✓ Wyrównano do środka (poziomo)', 'success');
   };
 
@@ -102,7 +102,7 @@ export const Header: React.FC = () => {
       obj.set({ left: rightmost - (obj.width || 0) });
       obj.setCoords();
     });
-    canvas.renderAll();
+    canvas.requestRenderAll();
     showNotification('✓ Wyrównano do prawej', 'success');
   };
 
@@ -113,7 +113,7 @@ export const Header: React.FC = () => {
       obj.set({ top: topmost });
       obj.setCoords();
     });
-    canvas.renderAll();
+    canvas.requestRenderAll();
     showNotification('✓ Wyrównano do góry', 'success');
   };
 
@@ -124,7 +124,7 @@ export const Header: React.FC = () => {
       obj.set({ top: centerY - ((obj.height || 0) / 2) });
       obj.setCoords();
     });
-    canvas.renderAll();
+    canvas.requestRenderAll();
     showNotification('✓ Wyrównano do środka (pionowo)', 'success');
   };
 
@@ -135,7 +135,7 @@ export const Header: React.FC = () => {
       obj.set({ top: bottommost - (obj.height || 0) });
       obj.setCoords();
     });
-    canvas.renderAll();
+    canvas.requestRenderAll();
     showNotification('✓ Wyrównano do dołu', 'success');
   };
 
@@ -147,7 +147,7 @@ export const Header: React.FC = () => {
 
     const group = activeSelection.toGroup();
     canvas.setActiveObject(group);
-    canvas.renderAll();
+    canvas.requestRenderAll();
     showNotification('✓ Obiekty zgrupowane', 'success');
   };
 
@@ -157,7 +157,7 @@ export const Header: React.FC = () => {
     if (!activeObject || activeObject.type !== 'group') return;
 
     (activeObject as fabric.Group).toActiveSelection();
-    canvas.renderAll();
+    canvas.requestRenderAll();
     showNotification('✓ Grupa rozgrupowana', 'success');
   };
 
@@ -174,8 +174,13 @@ export const Header: React.FC = () => {
           <span className="hidden sm:inline">Wróć do szablonów</span>
         </button>
         <div className="w-px h-6 bg-gray-300" />
-        <div className="text-xl font-bold text-primary-600">
-          🎨 Kreator
+        <div className="flex items-center gap-3">
+          <div className="text-xl font-bold text-primary-600">
+            🎨 Kreator Graficzny
+          </div>
+          <div className="text-xs font-semibold text-gray-500 px-2 py-1 bg-gradient-to-r from-blue-50 to-indigo-50 rounded border border-blue-200">
+            GRUPA PLUS
+          </div>
         </div>
         {currentProduct && (
           <div className="text-sm text-gray-600">
