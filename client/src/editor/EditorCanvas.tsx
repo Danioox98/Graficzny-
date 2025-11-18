@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { fabric } from 'fabric';
-import { useEditorStore } from '@/utils/store';
+import { useEditorStore, useUIStore } from '@/utils/store';
 import { mmToPixels } from '@/utils/products';
 
 interface EditorCanvasProps {
@@ -10,8 +10,10 @@ interface EditorCanvasProps {
 
 export const EditorCanvas: React.FC<EditorCanvasProps> = ({ width, height }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { setCanvas, addToHistory, setSelectedObjects, showGrid } = useEditorStore();
+  const { setCanvas, addToHistory, setSelectedObjects, showGrid, canvas } = useEditorStore();
+  const { showNotification } = useUIStore();
   const [showGuides] = useState(true);
+  const [clipboard, setClipboard] = useState<fabric.Object | null>(null);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -71,6 +73,87 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ width, height }) => 
       setCanvas(null);
     };
   }, [width, height]);
+
+  // Keyboard shortcuts - Copy, Paste, Duplicate
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!canvas) return;
+
+      // Ignore shortcuts when typing in input fields
+      if (document.activeElement?.tagName === 'INPUT' ||
+          document.activeElement?.tagName === 'TEXTAREA') {
+        return;
+      }
+
+      const activeObject = canvas.getActiveObject();
+      if (!activeObject) return;
+
+      // Copy (Ctrl+C)
+      if (e.ctrlKey && e.key === 'c') {
+        e.preventDefault();
+        activeObject.clone((cloned: fabric.Object) => {
+          setClipboard(cloned);
+          showNotification('📋 Skopiowano do schowka', 'success');
+        });
+      }
+
+      // Paste (Ctrl+V)
+      if (e.ctrlKey && e.key === 'v') {
+        e.preventDefault();
+        if (clipboard) {
+          clipboard.clone((clonedObj: fabric.Object) => {
+            canvas.discardActiveObject();
+            clonedObj.set({
+              left: (clonedObj.left || 0) + 20,
+              top: (clonedObj.top || 0) + 20,
+              evented: true,
+            });
+            if (clonedObj.type === 'activeSelection') {
+              // Active selection needs special handling
+              (clonedObj as fabric.ActiveSelection).canvas = canvas;
+              (clonedObj as fabric.ActiveSelection).forEachObject((obj: fabric.Object) => {
+                canvas.add(obj);
+              });
+              clonedObj.setCoords();
+            } else {
+              canvas.add(clonedObj);
+            }
+            canvas.setActiveObject(clonedObj);
+            canvas.requestRenderAll();
+            showNotification('✓ Wklejono obiekt', 'success');
+          });
+        }
+      }
+
+      // Duplicate (Ctrl+D)
+      if (e.ctrlKey && e.key === 'd') {
+        e.preventDefault();
+        activeObject.clone((cloned: fabric.Object) => {
+          canvas.discardActiveObject();
+          cloned.set({
+            left: (cloned.left || 0) + 20,
+            top: (cloned.top || 0) + 20,
+            evented: true,
+          });
+          if (cloned.type === 'activeSelection') {
+            (cloned as fabric.ActiveSelection).canvas = canvas;
+            (cloned as fabric.ActiveSelection).forEachObject((obj: fabric.Object) => {
+              canvas.add(obj);
+            });
+            cloned.setCoords();
+          } else {
+            canvas.add(cloned);
+          }
+          canvas.setActiveObject(cloned);
+          canvas.requestRenderAll();
+          showNotification('✓ Zduplikowano obiekt', 'success');
+        });
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [canvas, clipboard]);
 
   // Aktualizacja gridu
   useEffect(() => {

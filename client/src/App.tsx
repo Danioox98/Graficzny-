@@ -8,12 +8,14 @@ import { EditorCanvas } from './editor/EditorCanvas';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { Toast } from './components/Toast';
 import { HelpfulTips } from './components/HelpfulTips';
+import { KeyboardShortcutsPanel } from './components/KeyboardShortcutsPanel';
 import { useEditorStore } from './utils/store';
 
 function App() {
   const { currentProduct } = useEditorStore();
   const [showWelcome, setShowWelcome] = useState(false);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
+  const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false);
 
   // Pokaż selektor szablonów po wyborze produktu
   useEffect(() => {
@@ -40,6 +42,23 @@ function App() {
   const handleCloseTemplateSelector = () => {
     setShowTemplateSelector(false);
   };
+
+  // Keyboard shortcut dla pomocy (?)
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === '?' && !e.ctrlKey && !e.altKey) {
+        // Ignore if typing in input
+        if (document.activeElement?.tagName !== 'INPUT' &&
+            document.activeElement?.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          setShowKeyboardShortcuts(true);
+        }
+      }
+    };
+
+    window.addEventListener('keypress', handleKeyPress);
+    return () => window.removeEventListener('keypress', handleKeyPress);
+  }, []);
 
   // Jeśli nie wybrano produktu, pokaż selektor
   if (!currentProduct) {
@@ -70,6 +89,12 @@ function App() {
 
       {/* Helpful Tips */}
       <HelpfulTips />
+
+      {/* Keyboard Shortcuts Panel */}
+      <KeyboardShortcutsPanel
+        isOpen={showKeyboardShortcuts}
+        onClose={() => setShowKeyboardShortcuts(false)}
+      />
     </div>
   );
 }
