@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
   Type,
   Image as ImageIcon,
@@ -5,7 +6,11 @@ import {
   Circle,
   Triangle,
   Minus,
-  Trash2
+  Trash2,
+  Star,
+  Hexagon,
+  Pentagon,
+  Slash
 } from 'lucide-react';
 import { fabric } from 'fabric';
 import { useEditorStore, useUIStore } from '@/utils/store';
@@ -14,6 +19,23 @@ import { QuickAddPanel } from './QuickAddPanel';
 export const Toolbar: React.FC = () => {
   const { canvas, selectedObjects, currentProduct } = useEditorStore();
   const { showNotification } = useUIStore();
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Delete key
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        if (document.activeElement?.tagName !== 'INPUT' &&
+            document.activeElement?.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          deleteSelected();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [canvas, selectedObjects]);
 
   const addText = () => {
     if (!canvas) return;
@@ -97,6 +119,128 @@ export const Toolbar: React.FC = () => {
     canvas.renderAll();
   };
 
+  const addStar = () => {
+    if (!canvas) return;
+
+    // Create a star using polygon
+    const points = [];
+    const outerRadius = 75;
+    const innerRadius = 35;
+    const spikes = 5;
+
+    for (let i = 0; i < spikes * 2; i++) {
+      const radius = i % 2 === 0 ? outerRadius : innerRadius;
+      const angle = (i * Math.PI) / spikes;
+      points.push({
+        x: Math.cos(angle) * radius,
+        y: Math.sin(angle) * radius,
+      });
+    }
+
+    const star = new fabric.Polygon(points, {
+      left: 150,
+      top: 150,
+      fill: '#f1c40f',
+      stroke: '#f39c12',
+      strokeWidth: 2,
+    });
+
+    canvas.add(star);
+    canvas.setActiveObject(star);
+    canvas.renderAll();
+  };
+
+  const addPentagon = () => {
+    if (!canvas) return;
+
+    const points = [];
+    const radius = 75;
+    const sides = 5;
+
+    for (let i = 0; i < sides; i++) {
+      const angle = (i * 2 * Math.PI) / sides - Math.PI / 2;
+      points.push({
+        x: Math.cos(angle) * radius,
+        y: Math.sin(angle) * radius,
+      });
+    }
+
+    const pentagon = new fabric.Polygon(points, {
+      left: 150,
+      top: 150,
+      fill: '#9b59b6',
+      stroke: '#8e44ad',
+      strokeWidth: 2,
+    });
+
+    canvas.add(pentagon);
+    canvas.setActiveObject(pentagon);
+    canvas.renderAll();
+  };
+
+  const addHexagon = () => {
+    if (!canvas) return;
+
+    const points = [];
+    const radius = 75;
+    const sides = 6;
+
+    for (let i = 0; i < sides; i++) {
+      const angle = (i * 2 * Math.PI) / sides;
+      points.push({
+        x: Math.cos(angle) * radius,
+        y: Math.sin(angle) * radius,
+      });
+    }
+
+    const hexagon = new fabric.Polygon(points, {
+      left: 150,
+      top: 150,
+      fill: '#1abc9c',
+      stroke: '#16a085',
+      strokeWidth: 2,
+    });
+
+    canvas.add(hexagon);
+    canvas.setActiveObject(hexagon);
+    canvas.renderAll();
+  };
+
+  const addEllipse = () => {
+    if (!canvas) return;
+
+    const ellipse = new fabric.Ellipse({
+      left: 100,
+      top: 100,
+      rx: 100,
+      ry: 60,
+      fill: '#e67e22',
+      stroke: '#d35400',
+      strokeWidth: 2,
+    });
+
+    canvas.add(ellipse);
+    canvas.setActiveObject(ellipse);
+    canvas.renderAll();
+  };
+
+  const addArrow = () => {
+    if (!canvas) return;
+
+    // Create arrow using path
+    const arrow = new fabric.Path('M 0 0 L 200 0 L 200 -20 L 250 20 L 200 60 L 200 40 L 0 40 Z', {
+      left: 100,
+      top: 100,
+      fill: '#34495e',
+      stroke: '#2c3e50',
+      strokeWidth: 2,
+    });
+
+    canvas.add(arrow);
+    canvas.setActiveObject(arrow);
+    canvas.renderAll();
+  };
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!canvas || !e.target.files) return;
 
@@ -171,8 +315,13 @@ export const Toolbar: React.FC = () => {
     { icon: ImageIcon, label: 'Obraz', action: () => document.getElementById('image-upload')?.click() },
     { icon: Square, label: 'Prostokąt', action: addRectangle },
     { icon: Circle, label: 'Okrąg', action: addCircle },
+    { icon: Circle, label: 'Elipsa', action: addEllipse },
     { icon: Triangle, label: 'Trójkąt', action: addTriangle },
+    { icon: Pentagon, label: 'Pięciokąt', action: addPentagon },
+    { icon: Hexagon, label: 'Sześciokąt', action: addHexagon },
+    { icon: Star, label: 'Gwiazda', action: addStar },
     { icon: Minus, label: 'Linia', action: addLine },
+    { icon: Slash, label: 'Strzałka', action: addArrow },
   ];
 
   return (

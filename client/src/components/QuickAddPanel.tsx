@@ -35,9 +35,17 @@ export const QuickAddPanel: React.FC = () => {
   const addTextBlock = (block: QuickAddButton) => {
     if (!canvas) return;
 
+    // Losowa pozycja w bezpiecznej strefie canvas (unikaj nakładania)
+    const margin = 100;
+    const maxLeft = (canvas.width || 800) - margin - 300; // Rezerwujemy 300px na szerokość tekstu
+    const maxTop = (canvas.height || 600) - margin - 100; // Rezerwujemy 100px na wysokość tekstu
+
+    const randomLeft = Math.random() * (maxLeft - margin) + margin;
+    const randomTop = Math.random() * (maxTop - margin) + margin;
+
     const text = new fabric.IText(block.placeholder, {
-      left: 50,
-      top: 50,
+      left: randomLeft,
+      top: randomTop,
       fontFamily: 'Arial',
       fontSize: block.fontSize,
       fontWeight: block.fontWeight,

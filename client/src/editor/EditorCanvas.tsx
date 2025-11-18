@@ -89,6 +89,7 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ width, height }) => 
 
   const drawPrintGuides = (canvas: fabric.Canvas, widthMM: number, heightMM: number) => {
     const safeZone = 3; // 3mm strefa bezpieczna
+    const bleed = 3; // 3mm spadów (bleed)
 
     // Usuń stare linie
     const oldGuides = canvas.getObjects().filter((obj: any) => obj.id === 'print-guide');
@@ -97,13 +98,94 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ width, height }) => 
     const canvasWidth = mmToPixels(widthMM);
     const canvasHeight = mmToPixels(heightMM);
     const safeZonePx = mmToPixels(safeZone);
+    const bleedPx = mmToPixels(bleed);
 
-    // Strefa bezpieczna (zielona przerywana)
+    // Strefa spadów (bleed) - czerwony prostokąt pokazujący obszar spadów
+    // Górna linia spadu
+    const bleedTop = new fabric.Rect({
+      left: 0,
+      top: 0,
+      width: canvasWidth,
+      height: bleedPx,
+      fill: 'rgba(239, 68, 68, 0.1)', // Jasnoczerwonawy
+      stroke: '#ef4444',
+      strokeWidth: 1,
+      strokeDashArray: [3, 3],
+      selectable: false,
+      evented: false,
+    });
+    (bleedTop as any).id = 'print-guide';
+    canvas.add(bleedTop);
+
+    // Dolna linia spadu
+    const bleedBottom = new fabric.Rect({
+      left: 0,
+      top: canvasHeight - bleedPx,
+      width: canvasWidth,
+      height: bleedPx,
+      fill: 'rgba(239, 68, 68, 0.1)',
+      stroke: '#ef4444',
+      strokeWidth: 1,
+      strokeDashArray: [3, 3],
+      selectable: false,
+      evented: false,
+    });
+    (bleedBottom as any).id = 'print-guide';
+    canvas.add(bleedBottom);
+
+    // Lewa linia spadu
+    const bleedLeft = new fabric.Rect({
+      left: 0,
+      top: 0,
+      width: bleedPx,
+      height: canvasHeight,
+      fill: 'rgba(239, 68, 68, 0.1)',
+      stroke: '#ef4444',
+      strokeWidth: 1,
+      strokeDashArray: [3, 3],
+      selectable: false,
+      evented: false,
+    });
+    (bleedLeft as any).id = 'print-guide';
+    canvas.add(bleedLeft);
+
+    // Prawa linia spadu
+    const bleedRight = new fabric.Rect({
+      left: canvasWidth - bleedPx,
+      top: 0,
+      width: bleedPx,
+      height: canvasHeight,
+      fill: 'rgba(239, 68, 68, 0.1)',
+      stroke: '#ef4444',
+      strokeWidth: 1,
+      strokeDashArray: [3, 3],
+      selectable: false,
+      evented: false,
+    });
+    (bleedRight as any).id = 'print-guide';
+    canvas.add(bleedRight);
+
+    // Linia cięcia (czarna ciągła) - pokazuje gdzie zostanie przycięty dokument
+    const trimRect = new fabric.Rect({
+      left: bleedPx,
+      top: bleedPx,
+      width: canvasWidth - (bleedPx * 2),
+      height: canvasHeight - (bleedPx * 2),
+      fill: 'transparent',
+      stroke: '#000000',
+      strokeWidth: 2,
+      selectable: false,
+      evented: false,
+    });
+    (trimRect as any).id = 'print-guide';
+    canvas.add(trimRect);
+
+    // Strefa bezpieczna (zielona przerywana) - tu powinien być ważny tekst
     const safeRect = new fabric.Rect({
-      left: safeZonePx,
-      top: safeZonePx,
-      width: canvasWidth - (safeZonePx * 2),
-      height: canvasHeight - (safeZonePx * 2),
+      left: bleedPx + safeZonePx,
+      top: bleedPx + safeZonePx,
+      width: canvasWidth - (bleedPx * 2) - (safeZonePx * 2),
+      height: canvasHeight - (bleedPx * 2) - (safeZonePx * 2),
       fill: 'transparent',
       stroke: '#10b981',
       strokeWidth: 1,
@@ -113,21 +195,6 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ width, height }) => 
     });
     (safeRect as any).id = 'print-guide';
     canvas.add(safeRect);
-
-    // Ramka główna (czarna - linia cięcia)
-    const trimRect = new fabric.Rect({
-      left: 0,
-      top: 0,
-      width: canvasWidth,
-      height: canvasHeight,
-      fill: 'transparent',
-      stroke: '#000000',
-      strokeWidth: 2,
-      selectable: false,
-      evented: false,
-    });
-    (trimRect as any).id = 'print-guide';
-    canvas.add(trimRect);
 
     // Przesuń linie do tyłu
     const guides = canvas.getObjects().filter((obj: any) => obj.id === 'print-guide');
@@ -187,14 +254,18 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ width, height }) => 
       {showGuides && (
         <div className="mt-4 px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg">
           <div className="text-xs font-semibold text-gray-700 mb-2">Linie pomocnicze:</div>
-          <div className="flex gap-6 text-xs text-gray-600">
+          <div className="flex gap-4 text-xs text-gray-600">
             <div className="flex items-center gap-2">
-              <div className="w-4 h-0.5 bg-green-500 border-dashed border-green-500" style={{ borderStyle: 'dashed', borderWidth: '1px' }}></div>
-              <span>Strefa bezpieczna (nie umieszczaj tekstu poza tą linią)</span>
+              <div className="w-4 h-3 bg-red-100 border border-red-400" style={{ borderStyle: 'dashed' }}></div>
+              <span>Spady (bleed 3mm) - tło powinno sięgać do krawędzi</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-4 h-0.5 bg-black"></div>
               <span>Linia cięcia</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-0.5 bg-green-500" style={{ borderStyle: 'dashed', borderWidth: '1px' }}></div>
+              <span>Strefa bezpieczna (ważny tekst tylko tutaj)</span>
             </div>
           </div>
         </div>
