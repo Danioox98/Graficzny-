@@ -1,13 +1,11 @@
 import { Template } from '@/types';
 import { businessCardTemplates } from './business-cards';
-import { flyerTemplates } from './flyers';
-import { posterBannerInviteTemplates } from './posters-banners-invites';
+import { bannerTemplates } from './banners';
 
-// Wszystkie szablony
+// Wszystkie szablony - główny fokus na wizytówkach i banerach
 export const TEMPLATES: Template[] = [
-  ...businessCardTemplates,
-  ...flyerTemplates,
-  ...posterBannerInviteTemplates,
+  ...businessCardTemplates,  // 24 szablony wizytówek
+  ...bannerTemplates,         // 9 szablonów banerów
 ];
 
 export const getTemplateById = (id: string): Template | undefined => {
