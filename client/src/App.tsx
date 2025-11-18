@@ -5,11 +5,12 @@ import { PropertiesPanel } from './components/PropertiesPanel';
 import { ProductSelector } from './components/ProductSelector';
 import { EditorCanvas } from './editor/EditorCanvas';
 import { WelcomeScreen } from './components/WelcomeScreen';
-import { useEditorStore, useUIStore } from './utils/store';
+import { Toast } from './components/Toast';
+import { HelpfulTips } from './components/HelpfulTips';
+import { useEditorStore } from './utils/store';
 
 function App() {
   const { currentProduct } = useEditorStore();
-  const { notification, hideNotification } = useUIStore();
   const [showWelcome, setShowWelcome] = useState(false);
 
   // Sprawdź czy pokazać ekran powitalny
@@ -26,16 +27,6 @@ function App() {
     setShowWelcome(false);
     localStorage.setItem('hasSeenWelcome', 'true');
   };
-
-  // Ukryj powiadomienia po 3 sekundach
-  useEffect(() => {
-    if (notification) {
-      const timer = setTimeout(() => {
-        hideNotification();
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [notification, hideNotification]);
 
   // Jeśli nie wybrano produktu, pokaż selektor
   if (!currentProduct) {
@@ -56,12 +47,11 @@ function App() {
       {/* Welcome Screen */}
       {showWelcome && <WelcomeScreen onClose={handleCloseWelcome} />}
 
-      {/* Notification Toast */}
-      {notification && (
-        <div className="fixed bottom-6 right-6 bg-gray-900 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up">
-          {notification}
-        </div>
-      )}
+      {/* Toast Notifications */}
+      <Toast />
+
+      {/* Helpful Tips */}
+      <HelpfulTips />
     </div>
   );
 }

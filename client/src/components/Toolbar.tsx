@@ -258,9 +258,9 @@ export const Toolbar: React.FC = () => {
           );
 
           if (estimatedDPI < 150) {
-            showNotification('⚠️ Niska jakość obrazu! Zalecane minimum 300 DPI dla druku. Obraz może wyglądać rozmyty po wydrukowaniu.');
+            showNotification('Niska jakość obrazu! Zalecane minimum 300 DPI dla druku. Obraz może wyglądać rozmyty po wydrukowaniu.', 'error');
           } else if (estimatedDPI < 300) {
-            showNotification('⚠️ Jakość obrazu mogłaby być lepsza. Zalecane 300 DPI dla optymalnej jakości druku.');
+            showNotification('Jakość obrazu mogłaby być lepsza. Zalecane 300 DPI dla optymalnej jakości druku.', 'info');
           }
         }
 

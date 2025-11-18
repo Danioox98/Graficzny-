@@ -160,8 +160,8 @@ interface UIStore {
   loading: boolean;
   setLoading: (loading: boolean) => void;
 
-  notification: string | null;
-  showNotification: (message: string) => void;
+  notification: { type: 'success' | 'error' | 'info'; message: string } | null;
+  showNotification: (message: string, type?: 'success' | 'error' | 'info') => void;
   hideNotification: () => void;
 }
 
@@ -177,6 +177,6 @@ export const useUIStore = create<UIStore>((set) => ({
   setLoading: (loading) => set({ loading }),
 
   notification: null,
-  showNotification: (message) => set({ notification: message }),
+  showNotification: (message, type = 'info') => set({ notification: { type, message } }),
   hideNotification: () => set({ notification: null }),
 }));

@@ -29,24 +29,27 @@ export const ProductSelector: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 py-12 px-4">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold text-gray-900 mb-4">
-              🎨 Kreator Graficzny dla Drukarni
+          <div className="text-center mb-12 animate-fade-in">
+            <h1 className="text-6xl font-bold text-gray-900 mb-4">
+              🎨 Kreator Graficzny
             </h1>
-            <p className="text-xl text-gray-600 mb-2">
-              Profesjonalny kreator wizytówek i banerów
+            <p className="text-2xl text-gray-700 mb-3">
+              Zaprojektuj profesjonalną wizytówkę lub baner w kilka minut! ⚡
             </p>
-            <p className="text-lg text-gray-500">
-              Gotowe szablony • 300 DPI • CMYK • Druk offsetowy
+            <p className="text-lg text-gray-500 flex items-center justify-center gap-4 flex-wrap">
+              <span className="flex items-center gap-2">✨ Łatwy w użyciu</span>
+              <span className="flex items-center gap-2">🎯 300 DPI</span>
+              <span className="flex items-center gap-2">🖨️ Gotowe do druku</span>
+              <span className="flex items-center gap-2">💾 Autosave</span>
             </p>
           </div>
 
           <div className="mb-8 text-center">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-3">
-              Wybierz produkt
+            <h2 className="text-3xl font-semibold text-gray-800 mb-3">
+              Co chcesz zaprojektować? 🚀
             </h2>
-            <p className="text-gray-600">
-              Zacznij od wyboru rodzaju projektu
+            <p className="text-gray-600 text-lg">
+              Wybierz produkt i zacznij tworzyć!
             </p>
           </div>
 
@@ -87,22 +90,32 @@ export const ProductSelector: React.FC = () => {
           <span>Powrót do wyboru produktu</span>
         </button>
 
-        <div className="text-center mb-12">
-          <div className="text-6xl mb-4">{currentCategory?.icon}</div>
-          <h2 className="text-4xl font-bold text-gray-900 mb-3">
+        <div className="text-center mb-12 animate-fade-in">
+          <div className="text-7xl mb-4">{currentCategory?.icon}</div>
+          <h2 className="text-5xl font-bold text-gray-900 mb-3">
             {currentCategory?.name}
           </h2>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-gray-600 mb-4">
             {currentCategory?.description}
           </p>
+          {selectedCategory === 'wizytowki' && (
+            <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm">
+              ✨ Profesjonalna jakość druku offsetowego
+            </div>
+          )}
+          {selectedCategory === 'banery' && (
+            <div className="inline-flex items-center gap-2 bg-green-50 text-green-700 px-4 py-2 rounded-full text-sm">
+              🎯 Maksymalna szerokość: 320 cm
+            </div>
+          )}
         </div>
 
         <div className="mb-8 text-center">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-2">
-            Wybierz rozmiar
+          <h3 className="text-3xl font-semibold text-gray-800 mb-2">
+            Wybierz rozmiar projektu 📐
           </h3>
-          <p className="text-gray-600">
-            {selectedCategory === 'banery' && 'Maksymalna szerokość: 320 cm'}
+          <p className="text-gray-600 text-lg">
+            Wszystkie formaty przygotowane pod druk profesjonalny
           </p>
         </div>
 

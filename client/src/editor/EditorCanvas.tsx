@@ -242,8 +242,18 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ width, height }) => 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full p-8">
       {/* Info o formacie */}
-      <div className="mb-4 px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
-        <strong>{width} × {height} mm</strong> • 300 DPI • CMYK • Gotowe do druku offsetowego
+      <div className="mb-4 px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-lg text-sm">
+        <div className="flex items-center gap-2">
+          <span className="text-2xl">📐</span>
+          <div>
+            <div className="font-bold text-blue-900">
+              {width} × {height} mm
+            </div>
+            <div className="text-blue-700 text-xs">
+              ✨ 300 DPI • 🎨 CMYK • 🖨️ Druk profesjonalny
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="canvas-container">
@@ -252,20 +262,22 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ width, height }) => 
 
       {/* Legenda linii */}
       {showGuides && (
-        <div className="mt-4 px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg">
-          <div className="text-xs font-semibold text-gray-700 mb-2">Linie pomocnicze:</div>
-          <div className="flex gap-4 text-xs text-gray-600">
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-3 bg-red-100 border border-red-400" style={{ borderStyle: 'dashed' }}></div>
-              <span>Spady (bleed 3mm) - tło powinno sięgać do krawędzi</span>
+        <div className="mt-4 px-4 py-3 bg-gradient-to-r from-gray-50 to-gray-100 border-2 border-gray-200 rounded-lg shadow-sm">
+          <div className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
+            <span>📏</span> Linie pomocnicze - Twój przewodnik po projekcie
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-gray-700">
+            <div className="flex items-center gap-2 bg-white p-2 rounded">
+              <div className="w-4 h-3 bg-red-100 border border-red-400 flex-shrink-0" style={{ borderStyle: 'dashed' }}></div>
+              <span><strong className="text-red-600">Czerwone:</strong> Spady (bleed) - tło do krawędzi</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-0.5 bg-black"></div>
-              <span>Linia cięcia</span>
+            <div className="flex items-center gap-2 bg-white p-2 rounded">
+              <div className="w-4 h-0.5 bg-black flex-shrink-0"></div>
+              <span><strong className="text-gray-800">Czarne:</strong> Linia cięcia produktu</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-0.5 bg-green-500" style={{ borderStyle: 'dashed', borderWidth: '1px' }}></div>
-              <span>Strefa bezpieczna (ważny tekst tylko tutaj)</span>
+            <div className="flex items-center gap-2 bg-white p-2 rounded">
+              <div className="w-4 h-0.5 bg-green-500 flex-shrink-0" style={{ borderStyle: 'dashed', borderWidth: '1px' }}></div>
+              <span><strong className="text-green-600">Zielone:</strong> Strefa bezpieczna dla tekstu</span>
             </div>
           </div>
         </div>

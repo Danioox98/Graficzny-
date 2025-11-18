@@ -49,7 +49,7 @@ export const Header: React.FC = () => {
 
   const handleSave = () => {
     // TODO: Implementacja zapisywania
-    showNotification('Projekt zapisany!');
+    showNotification('✓ Projekt zapisany pomyślnie!', 'success');
   };
 
   const handleExport = () => {
