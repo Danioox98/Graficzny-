@@ -14,10 +14,13 @@ export const ProductSelector: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold text-gray-900 mb-4">
-            🎨 Kreator Graficzny
+            🎨 Kreator Graficzny dla Drukarni
           </h1>
-          <p className="text-xl text-gray-600">
-            Zaprojektuj profesjonalne materiały drukowane w kilka minut
+          <p className="text-xl text-gray-600 mb-2">
+            Profesjonalny kreator wizytówek i banerów
+          </p>
+          <p className="text-lg text-gray-500">
+            33 gotowe szablony • 300 DPI • CMYK • Gotowe do druku offsetowego
           </p>
         </div>
 
@@ -27,10 +30,17 @@ export const ProductSelector: React.FC = () => {
 
             return (
               <div key={category.id}>
-                <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
-                  <span>{category.icon}</span>
-                  {category.name}
-                </h2>
+                <div className="mb-6">
+                  <h2 className="text-2xl font-semibold flex items-center gap-2">
+                    <span>{category.icon}</span>
+                    {category.name}
+                  </h2>
+                  {(category as any).description && (
+                    <p className="text-gray-600 ml-10 mt-1">
+                      {(category as any).description}
+                    </p>
+                  )}
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {products.map((product) => (

@@ -1,5 +1,6 @@
 import { Product } from '@/types';
 
+// FOKUS: Wizytówki i Banery - pozostałe produkty klienci projektują sami
 export const PRODUCTS: Product[] = [
   // Wizytówki
   {
@@ -9,7 +10,7 @@ export const PRODUCTS: Product[] = [
     width: 85,
     height: 55,
     price: 0.50,
-    description: 'Standardowa wizytówka 85x55mm',
+    description: 'Standardowa wizytówka 85x55mm - najpopularniejszy format',
   },
   {
     id: 'wiz-90x50',
@@ -18,143 +19,74 @@ export const PRODUCTS: Product[] = [
     width: 90,
     height: 50,
     price: 0.60,
-    description: 'Wizytówka panoramiczna 90x50mm',
+    description: 'Wizytówka panoramiczna 90x50mm - nowoczesny format',
+  },
+  {
+    id: 'wiz-90x55',
+    name: 'Wizytówka Premium',
+    category: 'wizytowki',
+    width: 90,
+    height: 55,
+    price: 0.65,
+    description: 'Wizytówka Premium 90x55mm - luksusowy format',
   },
 
-  // Ulotki
+  // Banery Roll-up
   {
-    id: 'ulotka-a6',
-    name: 'Ulotka A6',
-    category: 'ulotki',
-    width: 105,
-    height: 148,
-    price: 0.80,
-    description: 'Ulotka A6 (105x148mm)',
+    id: 'baner-rollup-85x200',
+    name: 'Baner Roll-up 85x200cm',
+    category: 'banery',
+    width: 850,
+    height: 2000,
+    price: 100.00,
+    description: 'Roll-up banner 85x200cm - idealny na targi i eventy',
   },
   {
-    id: 'ulotka-a5',
-    name: 'Ulotka A5',
-    category: 'ulotki',
-    width: 148,
-    height: 210,
-    price: 1.20,
-    description: 'Ulotka A5 (148x210mm)',
-  },
-  {
-    id: 'ulotka-a4',
-    name: 'Ulotka A4',
-    category: 'ulotki',
-    width: 210,
-    height: 297,
-    price: 2.00,
-    description: 'Ulotka A4 (210x297mm)',
-  },
-  {
-    id: 'ulotka-dl',
-    name: 'Ulotka DL',
-    category: 'ulotki',
-    width: 99,
-    height: 210,
-    price: 0.90,
-    description: 'Ulotka DL (99x210mm)',
-  },
-
-  // Plakaty
-  {
-    id: 'plakat-a3',
-    name: 'Plakat A3',
-    category: 'plakaty',
-    width: 297,
-    height: 420,
-    price: 8.00,
-    description: 'Plakat A3 (297x420mm)',
-  },
-  {
-    id: 'plakat-a2',
-    name: 'Plakat A2',
-    category: 'plakaty',
-    width: 420,
-    height: 594,
-    price: 15.00,
-    description: 'Plakat A2 (420x594mm)',
-  },
-  {
-    id: 'plakat-a1',
-    name: 'Plakat A1',
-    category: 'plakaty',
-    width: 594,
-    height: 841,
-    price: 25.00,
-    description: 'Plakat A1 (594x841mm)',
-  },
-  {
-    id: 'plakat-a0',
-    name: 'Plakat A0',
-    category: 'plakaty',
-    width: 841,
-    height: 1189,
-    price: 45.00,
-    description: 'Plakat A0 (841x1189mm)',
-  },
-
-  // Banery
-  {
-    id: 'baner-100x200',
-    name: 'Baner Roll-up',
+    id: 'baner-rollup-100x200',
+    name: 'Baner Roll-up 100x200cm',
     category: 'banery',
     width: 1000,
     height: 2000,
     price: 120.00,
-    description: 'Baner Roll-up 100x200cm',
+    description: 'Roll-up banner 100x200cm - najbardziej popularny',
   },
   {
-    id: 'baner-200x100',
-    name: 'Baner reklamowy',
+    id: 'baner-rollup-120x200',
+    name: 'Baner Roll-up 120x200cm',
+    category: 'banery',
+    width: 1200,
+    height: 2000,
+    price: 140.00,
+    description: 'Roll-up banner 120x200cm - maksymalna widoczność',
+  },
+
+  // Banery reklamowe
+  {
+    id: 'baner-reklam-200x100',
+    name: 'Baner reklamowy 200x100cm',
     category: 'banery',
     width: 2000,
     height: 1000,
     price: 150.00,
-    description: 'Baner reklamowy 200x100cm',
-  },
-
-  // Naklejki
-  {
-    id: 'naklejka-okragla-50',
-    name: 'Naklejka okrągła Ø50mm',
-    category: 'naklejki',
-    width: 50,
-    height: 50,
-    price: 0.30,
-    description: 'Naklejka okrągła średnica 50mm',
+    description: 'Baner reklamowy 200x100cm - outdoor',
   },
   {
-    id: 'naklejka-prostokat-70x50',
-    name: 'Naklejka prostokątna 70x50mm',
-    category: 'naklejki',
-    width: 70,
-    height: 50,
-    price: 0.35,
-    description: 'Naklejka prostokątna 70x50mm',
-  },
-
-  // Zaproszenia
-  {
-    id: 'zaproszenie-a5',
-    name: 'Zaproszenie A5',
-    category: 'zaproszenia',
-    width: 148,
-    height: 210,
-    price: 3.50,
-    description: 'Zaproszenie A5 (148x210mm)',
+    id: 'baner-reklam-300x100',
+    name: 'Baner reklamowy 300x100cm',
+    category: 'banery',
+    width: 3000,
+    height: 1000,
+    price: 200.00,
+    description: 'Baner reklamowy 300x100cm - duży format',
   },
   {
-    id: 'zaproszenie-square',
-    name: 'Zaproszenie kwadratowe',
-    category: 'zaproszenia',
-    width: 150,
-    height: 150,
-    price: 4.00,
-    description: 'Zaproszenie kwadratowe 150x150mm',
+    id: 'baner-reklam-400x100',
+    name: 'Baner reklamowy 400x100cm',
+    category: 'banery',
+    width: 4000,
+    height: 1000,
+    price: 250.00,
+    description: 'Baner reklamowy 400x100cm - ekstra duży',
   },
 ];
 
@@ -166,13 +98,10 @@ export const getProductsByCategory = (category: string): Product[] => {
   return PRODUCTS.filter(p => p.category === category);
 };
 
+// Tylko wizytówki i banery - fokus na tych produktach
 export const CATEGORIES = [
-  { id: 'wizytowki', name: 'Wizytówki', icon: '💼' },
-  { id: 'ulotki', name: 'Ulotki', icon: '📄' },
-  { id: 'plakaty', name: 'Plakaty', icon: '🖼️' },
-  { id: 'banery', name: 'Banery', icon: '🎯' },
-  { id: 'naklejki', name: 'Naklejki', icon: '🏷️' },
-  { id: 'zaproszenia', name: 'Zaproszenia', icon: '💌' },
+  { id: 'wizytowki', name: 'Wizytówki', icon: '💼', description: '24 profesjonalne szablony do wyboru' },
+  { id: 'banery', name: 'Banery', icon: '🎯', description: '9 szablonów roll-up i reklamowych' },
 ];
 
 // Konwersja mm na piksele (300 DPI dla druku)
