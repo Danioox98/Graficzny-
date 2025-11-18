@@ -18,14 +18,30 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({ product, onC
 
   const handleTemplateSelect = (templateId: string) => {
     const template = getTemplateById(templateId);
-    if (!template || !canvas) return;
+    if (!template) {
+      showNotification('Nie znaleziono szablonu', 'error');
+      return;
+    }
+
+    if (!canvas) {
+      showNotification('Canvas nie jest gotowy', 'error');
+      return;
+    }
 
     try {
       const templateData = JSON.parse(template.data);
+
+      // Clear canvas first
+      canvas.clear();
+
+      // Load template with error handling
       canvas.loadFromJSON(templateData, () => {
         canvas.renderAll();
         showNotification(`✓ Szablon "${template.name}" załadowany!`, 'success');
         onClose();
+      }, (o: any, object: any) => {
+        // Error callback for individual objects
+        console.error('Error loading object:', o, object);
       });
     } catch (error) {
       showNotification('Błąd podczas ładowania szablonu', 'error');
