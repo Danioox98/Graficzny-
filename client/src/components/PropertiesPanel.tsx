@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { HexColorPicker } from 'react-colorful';
+import { fabric } from 'fabric';
 import { useEditorStore } from '@/utils/store';
 import { LayersPanel } from './LayersPanel';
 
@@ -7,6 +8,12 @@ export const PropertiesPanel: React.FC = () => {
   const { canvas, selectedObjects } = useEditorStore();
   const [properties, setProperties] = useState<any>({});
   const [showColorPicker, setShowColorPicker] = useState(false);
+  const [imageFilters, setImageFilters] = useState({
+    brightness: 0,
+    contrast: 0,
+    saturation: 0,
+    blur: 0,
+  });
 
   useEffect(() => {
     if (selectedObjects.length === 1) {
@@ -47,6 +54,41 @@ export const PropertiesPanel: React.FC = () => {
     obj.setCoords();
     canvas.renderAll();
     setProperties({ ...properties, [key]: value });
+  };
+
+  const applyImageFilter = (filterType: string, value: number) => {
+    if (!canvas || selectedObjects.length !== 1) return;
+    const obj = selectedObjects[0];
+    if (obj.type !== 'image') return;
+
+    const img = obj as fabric.Image;
+
+    // Remove existing filters of this type
+    if (img.filters) {
+      img.filters = img.filters.filter((f: any) => {
+        if (!f) return false;
+        const type = f.type.toLowerCase();
+        return type !== filterType.toLowerCase();
+      });
+    } else {
+      img.filters = [];
+    }
+
+    // Add new filter if value is not default
+    if (filterType === 'brightness' && value !== 0) {
+      img.filters.push(new fabric.Image.filters.Brightness({ brightness: value / 100 }));
+    } else if (filterType === 'contrast' && value !== 0) {
+      img.filters.push(new fabric.Image.filters.Contrast({ contrast: value / 100 }));
+    } else if (filterType === 'saturation' && value !== 0) {
+      img.filters.push(new fabric.Image.filters.Saturation({ saturation: value / 100 }));
+    } else if (filterType === 'blur' && value > 0) {
+      img.filters.push(new fabric.Image.filters.Blur({ blur: value / 100 }));
+    }
+
+    img.applyFilters();
+    canvas.renderAll();
+
+    setImageFilters({ ...imageFilters, [filterType]: value });
   };
 
   const applyTextStyle = (style: { fontSize: number; fontWeight: string; fontFamily?: string }) => {
@@ -254,6 +296,242 @@ export const PropertiesPanel: React.FC = () => {
             className="w-full"
           />
         </div>
+
+        {/* Zaawansowane efekty */}
+        <div className="border-t border-gray-200 pt-4">
+          <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+            ✨ Zaawansowane efekty
+          </h4>
+
+          {/* Cień */}
+          <div className="bg-gradient-to-r from-gray-50 to-slate-50 p-3 rounded-lg border border-gray-200 mb-3">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+              <input
+                type="checkbox"
+                checked={!!(selectedObjects[0] as any).shadow}
+                onChange={(e) => {
+                  const obj = selectedObjects[0];
+                  if (e.target.checked) {
+                    (obj as any).shadow = {
+                      color: 'rgba(0,0,0,0.3)',
+                      blur: 10,
+                      offsetX: 5,
+                      offsetY: 5,
+                    };
+                  } else {
+                    (obj as any).shadow = null;
+                  }
+                  canvas?.renderAll();
+                }}
+                className="rounded"
+              />
+              Cień
+            </label>
+
+            {(selectedObjects[0] as any).shadow && (
+              <div className="space-y-2 mt-2">
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">Rozmazanie</label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="50"
+                    value={(selectedObjects[0] as any).shadow.blur || 10}
+                    onChange={(e) => {
+                      const obj = selectedObjects[0];
+                      (obj as any).shadow.blur = parseInt(e.target.value);
+                      canvas?.renderAll();
+                    }}
+                    className="w-full"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-xs text-gray-600 mb-1">Offset X</label>
+                    <input
+                      type="number"
+                      value={(selectedObjects[0] as any).shadow.offsetX || 0}
+                      onChange={(e) => {
+                        const obj = selectedObjects[0];
+                        (obj as any).shadow.offsetX = parseInt(e.target.value);
+                        canvas?.renderAll();
+                      }}
+                      className="input text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-600 mb-1">Offset Y</label>
+                    <input
+                      type="number"
+                      value={(selectedObjects[0] as any).shadow.offsetY || 0}
+                      onChange={(e) => {
+                        const obj = selectedObjects[0];
+                        (obj as any).shadow.offsetY = parseInt(e.target.value);
+                        canvas?.renderAll();
+                      }}
+                      className="input text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Obwódka (Stroke) */}
+          <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-3 rounded-lg border border-indigo-200">
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-sm font-medium text-gray-700">Obwódka</label>
+              <input
+                type="checkbox"
+                checked={!!(selectedObjects[0] as any).stroke}
+                onChange={(e) => {
+                  const obj = selectedObjects[0];
+                  if (e.target.checked) {
+                    (obj as any).stroke = '#000000';
+                    (obj as any).strokeWidth = 2;
+                  } else {
+                    (obj as any).stroke = undefined;
+                    (obj as any).strokeWidth = 0;
+                  }
+                  canvas?.renderAll();
+                }}
+                className="rounded"
+              />
+            </div>
+
+            {(selectedObjects[0] as any).stroke && (
+              <div className="space-y-2 mt-2">
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">Kolor obwódki</label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={(selectedObjects[0] as any).stroke}
+                      onChange={(e) => {
+                        const obj = selectedObjects[0];
+                        (obj as any).stroke = e.target.value;
+                        canvas?.renderAll();
+                      }}
+                      className="w-10 h-10 rounded border-2 border-gray-300"
+                    />
+                    <input
+                      type="text"
+                      value={(selectedObjects[0] as any).stroke}
+                      onChange={(e) => {
+                        const obj = selectedObjects[0];
+                        (obj as any).stroke = e.target.value;
+                        canvas?.renderAll();
+                      }}
+                      className="input text-sm flex-1"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">
+                    Grubość: {(selectedObjects[0] as any).strokeWidth || 1}px
+                  </label>
+                  <input
+                    type="range"
+                    min="1"
+                    max="20"
+                    value={(selectedObjects[0] as any).strokeWidth || 1}
+                    onChange={(e) => {
+                      const obj = selectedObjects[0];
+                      (obj as any).strokeWidth = parseInt(e.target.value);
+                      canvas?.renderAll();
+                    }}
+                    className="w-full"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Image Filters */}
+        {selectedObjects[0]?.type === 'image' && (
+          <div className="border-t border-gray-200 pt-4">
+            <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+              🎨 Filtry obrazu
+            </h4>
+
+            <div className="space-y-3">
+              {/* Brightness */}
+              <div className="bg-gradient-to-r from-yellow-50 to-amber-50 p-3 rounded-lg border border-yellow-200">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  ☀️ Jasność: {imageFilters.brightness}%
+                </label>
+                <input
+                  type="range"
+                  min="-100"
+                  max="100"
+                  value={imageFilters.brightness}
+                  onChange={(e) => applyImageFilter('brightness', parseInt(e.target.value))}
+                  className="w-full"
+                />
+              </div>
+
+              {/* Contrast */}
+              <div className="bg-gradient-to-r from-slate-50 to-gray-50 p-3 rounded-lg border border-slate-200">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  🌓 Kontrast: {imageFilters.contrast}%
+                </label>
+                <input
+                  type="range"
+                  min="-100"
+                  max="100"
+                  value={imageFilters.contrast}
+                  onChange={(e) => applyImageFilter('contrast', parseInt(e.target.value))}
+                  className="w-full"
+                />
+              </div>
+
+              {/* Saturation */}
+              <div className="bg-gradient-to-r from-pink-50 to-rose-50 p-3 rounded-lg border border-pink-200">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  🎨 Nasycenie: {imageFilters.saturation}%
+                </label>
+                <input
+                  type="range"
+                  min="-100"
+                  max="100"
+                  value={imageFilters.saturation}
+                  onChange={(e) => applyImageFilter('saturation', parseInt(e.target.value))}
+                  className="w-full"
+                />
+              </div>
+
+              {/* Blur */}
+              <div className="bg-gradient-to-r from-blue-50 to-cyan-50 p-3 rounded-lg border border-blue-200">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  💫 Rozmycie: {imageFilters.blur}%
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={imageFilters.blur}
+                  onChange={(e) => applyImageFilter('blur', parseInt(e.target.value))}
+                  className="w-full"
+                />
+              </div>
+
+              {/* Reset filters button */}
+              <button
+                onClick={() => {
+                  setImageFilters({ brightness: 0, contrast: 0, saturation: 0, blur: 0 });
+                  const img = selectedObjects[0] as fabric.Image;
+                  img.filters = [];
+                  img.applyFilters();
+                  canvas?.renderAll();
+                }}
+                className="w-full btn btn-secondary text-sm py-2"
+              >
+                🔄 Resetuj filtry
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Text properties */}
         {isText && (
