@@ -59,12 +59,22 @@ access-keys/
 3. Przy każdej sprzedaży wyślij klientowi kolejny klucz
 4. Śledź użycie w pliku CSV
 
-### Kontrola Dostępu
+### Kontrola Dostępu (Opcja 3: Combo - 48h + 10 PDF)
 
+✅ **ZAIMPLEMENTOWANE W APLIKACJI!**
+
+Każdy klucz dostępu daje:
+- **48 godzin** dostępu od momentu aktywacji
+- **10 eksportów PDF** (300 DPI, gotowych do druku)
+- Dostęp wygasa gdy **pierwszy limit zostanie osiągnięty**
+
+Jak to działa:
 1. Wygeneruj klucze z unikalnym prefixem
-2. Zintegruj z aplikacją (zobacz `ACCESS_KEYS_GUIDE.md`)
-3. Użytkownicy wpisują klucz przy logowaniu
-4. System weryfikuje i aktywuje dostęp
+2. Klient kupuje klucz na Allegro
+3. Klient wpisuje klucz w aplikacji
+4. System aktywuje dostęp na 48h + 10 pobrań
+5. W prawym górnym rogu widzi licznik pozostałego czasu i pobrań
+6. Po wykorzystaniu dostęp wygasa
 
 ---
 

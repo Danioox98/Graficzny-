@@ -9,13 +9,25 @@ import { WelcomeScreen } from './components/WelcomeScreen';
 import { Toast } from './components/Toast';
 import { HelpfulTips } from './components/HelpfulTips';
 import { KeyboardShortcutsPanel } from './components/KeyboardShortcutsPanel';
+import { AccessKeyPrompt } from './components/AccessKeyPrompt';
+import { AccessStatus } from './components/AccessStatus';
 import { useEditorStore } from './utils/store';
+import { checkAccessStatus } from './utils/accessKeys';
 
 function App() {
   const { currentProduct } = useEditorStore();
   const [showWelcome, setShowWelcome] = useState(false);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false);
+  const [hasAccess, setHasAccess] = useState(false);
+  const [isCheckingAccess, setIsCheckingAccess] = useState(true);
+
+  // Sprawdź dostęp przy załadowaniu aplikacji
+  useEffect(() => {
+    const status = checkAccessStatus();
+    setHasAccess(status.hasAccess);
+    setIsCheckingAccess(false);
+  }, []);
 
   // Pokaż selektor szablonów po wyborze produktu
   useEffect(() => {
@@ -42,6 +54,31 @@ function App() {
   const handleCloseTemplateSelector = () => {
     setShowTemplateSelector(false);
   };
+
+  const handleAccessSuccess = () => {
+    setHasAccess(true);
+  };
+
+  const handleAccessExpired = () => {
+    setHasAccess(false);
+  };
+
+  // Jeśli sprawdzamy dostęp, pokaż loader
+  if (isCheckingAccess) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Ładowanie...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Jeśli nie ma dostępu, pokaż ekran logowania
+  if (!hasAccess) {
+    return <AccessKeyPrompt onSuccess={handleAccessSuccess} />;
+  }
 
   // Keyboard shortcut dla pomocy (?)
   useEffect(() => {
@@ -75,6 +112,9 @@ function App() {
       </div>
 
       <PropertiesPanel />
+
+      {/* Access Status Display */}
+      <AccessStatus onAccessExpired={handleAccessExpired} />
 
       {/* Template Selector */}
       {showTemplateSelector && (

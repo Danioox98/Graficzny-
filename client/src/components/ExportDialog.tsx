@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Download, FileText, Settings, X } from 'lucide-react';
 import { useEditorStore, useUIStore } from '@/utils/store';
 import { exportAPI } from '@/utils/api';
+import { checkAccessStatus, incrementDownloadCounter } from '@/utils/accessKeys';
 
 interface ExportDialogProps {
   isOpen: boolean;
@@ -26,6 +27,20 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({ isOpen, onClose }) =
   const handleExport = async () => {
     if (!canvas || !currentProduct) {
       showNotification('Brak projektu do eksportu');
+      return;
+    }
+
+    // Sprawdź dostęp przed eksportem
+    const accessStatus = checkAccessStatus();
+    if (!accessStatus.hasAccess) {
+      if (accessStatus.reason === 'expired_downloads') {
+        showNotification('❌ Wykorzystałeś wszystkie 10 pobrań PDF. Kup nowy klucz dostępu aby kontynuować.');
+      } else if (accessStatus.reason === 'expired_time') {
+        showNotification('❌ Twój dostęp wygasł (przekroczono 48 godzin). Kup nowy klucz dostępu.');
+      } else {
+        showNotification('❌ Brak dostępu. Wprowadź klucz dostępu.');
+      }
+      onClose();
       return;
     }
 
@@ -56,7 +71,20 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({ isOpen, onClose }) =
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      showNotification('✅ PDF został pobrany!');
+      // Inkrementuj licznik pobrań
+      const incrementSuccess = incrementDownloadCounter();
+
+      if (incrementSuccess) {
+        const newStatus = checkAccessStatus();
+        const remaining = newStatus.remainingDownloads || 0;
+
+        if (remaining <= 3 && remaining > 0) {
+          showNotification(`✅ PDF został pobrany! Pozostało ${remaining} ${remaining === 1 ? 'pobranie' : 'pobrania'}.`);
+        } else {
+          showNotification('✅ PDF został pobrany!');
+        }
+      }
+
       onClose();
     } catch (error) {
       console.error('Export error:', error);
