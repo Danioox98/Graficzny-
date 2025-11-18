@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { router as projectsRouter } from './routes/projects.js';
 import { router as uploadRouter } from './routes/upload.js';
 import { router as ordersRouter } from './routes/orders.js';
+import { router as exportRouter } from './routes/export.js';
 import { initDatabase } from './services/database.js';
 
 dotenv.config();
@@ -21,11 +22,13 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Serwowanie plików statycznych (uploaded images)
 app.use('/uploads', express.static('uploads'));
+app.use('/exports', express.static('exports'));
 
 // Routes
 app.use('/api/projects', projectsRouter);
 app.use('/api/upload', uploadRouter);
 app.use('/api/orders', ordersRouter);
+app.use('/api/export', exportRouter);
 
 // Health check
 app.get('/api/health', (req, res) => {

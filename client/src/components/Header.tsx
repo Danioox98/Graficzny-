@@ -1,10 +1,13 @@
+import { useState } from 'react';
 import { Download, Save, Undo, Redo, ZoomIn, ZoomOut, Grid, ShoppingCart } from 'lucide-react';
 import { useEditorStore, useCartStore, useUIStore } from '@/utils/store';
+import { ExportDialog } from './ExportDialog';
 
 export const Header: React.FC = () => {
   const { zoom, setZoom, undo, redo, history, historyIndex, toggleGrid, showGrid, currentProject } = useEditorStore();
   const { items } = useCartStore();
   const { showNotification } = useUIStore();
+  const [showExportDialog, setShowExportDialog] = useState(false);
 
   const handleZoomIn = () => {
     if (zoom < 3) setZoom(zoom + 0.1);
@@ -20,8 +23,7 @@ export const Header: React.FC = () => {
   };
 
   const handleExport = () => {
-    // TODO: Implementacja eksportu do PDF
-    showNotification('Eksportowanie do PDF...');
+    setShowExportDialog(true);
   };
 
   return (
@@ -106,6 +108,9 @@ export const Header: React.FC = () => {
           )}
         </button>
       </div>
+
+      {/* Export Dialog */}
+      <ExportDialog isOpen={showExportDialog} onClose={() => setShowExportDialog(false)} />
     </header>
   );
 };

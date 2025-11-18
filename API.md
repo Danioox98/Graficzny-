@@ -102,6 +102,105 @@ Usuń projekt
 
 ---
 
+### Export
+
+#### POST /api/export/pdf
+Eksportuj projekt do PDF i zapisz na serwerze
+
+**Request:**
+```json
+{
+  "projectId": "1234567890-abc123",
+  "canvasData": "{...}",
+  "width": 85,
+  "height": 55,
+  "bleed": 3,
+  "dpi": 300,
+  "colorMode": "CMYK",
+  "title": "Moja wizytówka"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "filename": "1234567890-abc123_1705318200000.pdf",
+  "url": "/exports/1234567890-abc123_1705318200000.pdf",
+  "size": 245678,
+  "message": "PDF wygenerowany pomyślnie"
+}
+```
+
+#### POST /api/export/pdf/download
+Pobierz PDF bezpośrednio (bez zapisywania na serwerze)
+
+**Request:**
+```json
+{
+  "canvasData": "{...}",
+  "width": 85,
+  "height": 55,
+  "bleed": 3,
+  "dpi": 300,
+  "colorMode": "CMYK",
+  "title": "Moja wizytówka"
+}
+```
+
+**Response:**
+Binary PDF file (application/pdf)
+
+**Headers:**
+- Content-Type: application/pdf
+- Content-Disposition: attachment; filename="projekt_1705318200000.pdf"
+
+#### POST /api/export/preview
+Wygeneruj podgląd PNG projektu
+
+**Request:**
+```json
+{
+  "canvasData": "{...}",
+  "width": 85,
+  "height": 55,
+  "dpi": 72
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "filename": "preview_1234567890-xyz789.png",
+  "url": "/exports/preview_1234567890-xyz789.png",
+  "size": 123456
+}
+```
+
+#### GET /api/export/info/:projectId
+Pobierz informacje o eksporcie projektu
+
+**Response:**
+```json
+{
+  "projectId": "1234567890-abc123",
+  "hasPdf": true,
+  "pdfUrl": "/exports/1234567890-abc123_1705318200000.pdf"
+}
+```
+
+**Export Parameters:**
+- `canvasData` (required): JSON z danymi canvas (Fabric.js)
+- `width` (required): Szerokość w mm
+- `height` (required): Wysokość w mm
+- `bleed` (optional): Spad w mm (default: 3)
+- `dpi` (optional): Rozdzielczość (default: 300)
+- `colorMode` (optional): 'RGB' lub 'CMYK' (default: 'CMYK')
+- `title` (optional): Tytuł dokumentu
+
+---
+
 ### Upload
 
 #### POST /api/upload
@@ -353,4 +452,33 @@ const response = await fetch('http://localhost:3000/api/orders', {
 
 const order = await response.json();
 console.log('Zamówienie utworzone:', order.id);
+```
+
+### Eksportuj do PDF
+
+```javascript
+const canvas = fabricCanvas; // Twój Fabric.js canvas
+
+const response = await fetch('http://localhost:3000/api/export/pdf/download', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    canvasData: JSON.stringify(canvas.toJSON()),
+    width: 85, // mm
+    height: 55, // mm
+    bleed: 3, // mm
+    dpi: 300,
+    colorMode: 'CMYK',
+    title: 'Moja wizytówka',
+  }),
+});
+
+const blob = await response.blob();
+const url = window.URL.createObjectURL(blob);
+const link = document.createElement('a');
+link.href = url;
+link.download = 'wizytowka.pdf';
+link.click();
 ```
