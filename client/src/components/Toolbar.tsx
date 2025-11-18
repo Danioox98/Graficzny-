@@ -8,10 +8,12 @@ import {
   Trash2
 } from 'lucide-react';
 import { fabric } from 'fabric';
-import { useEditorStore } from '@/utils/store';
+import { useEditorStore, useUIStore } from '@/utils/store';
+import { QuickAddPanel } from './QuickAddPanel';
 
 export const Toolbar: React.FC = () => {
-  const { canvas, selectedObjects } = useEditorStore();
+  const { canvas, selectedObjects, currentProduct } = useEditorStore();
+  const { showNotification } = useUIStore();
 
   const addText = () => {
     if (!canvas) return;
@@ -103,6 +105,21 @@ export const Toolbar: React.FC = () => {
 
     reader.onload = (event) => {
       fabric.Image.fromURL(event.target?.result as string, (img: fabric.Image) => {
+        // Sprawdzenie jakości DPI
+        if (currentProduct && img.width && img.height) {
+          // Sprawdź czy obraz ma wystarczającą rozdzielczość do pokrycia całego canvas
+          const estimatedDPI = Math.min(
+            (img.width / currentProduct.width) * 25.4,
+            (img.height / currentProduct.height) * 25.4
+          );
+
+          if (estimatedDPI < 150) {
+            showNotification('⚠️ Niska jakość obrazu! Zalecane minimum 300 DPI dla druku. Obraz może wyglądać rozmyty po wydrukowaniu.');
+          } else if (estimatedDPI < 300) {
+            showNotification('⚠️ Jakość obrazu mogłaby być lepsza. Zalecane 300 DPI dla optymalnej jakości druku.');
+          }
+        }
+
         // Skaluj obraz jeśli jest za duży
         const maxWidth = canvas.width! * 0.5;
         const maxHeight = canvas.height! * 0.5;
@@ -116,6 +133,18 @@ export const Toolbar: React.FC = () => {
           left: 100,
           top: 100,
         });
+
+        // Dodaj ikonę ostrzeżenia jeśli DPI jest niskie
+        if (currentProduct && img.width && img.height) {
+          const estimatedDPI = Math.min(
+            (img.width / currentProduct.width) * 25.4,
+            (img.height / currentProduct.height) * 25.4
+          );
+
+          if (estimatedDPI < 300) {
+            (img as any).hasQualityWarning = true;
+          }
+        }
 
         canvas.add(img);
         canvas.setActiveObject(img);
@@ -148,6 +177,9 @@ export const Toolbar: React.FC = () => {
 
   return (
     <div className="editor-sidebar-left bg-white p-4">
+      {/* Szybkie dodawanie - gotowe bloki */}
+      <QuickAddPanel />
+
       <h3 className="text-lg font-semibold mb-4">Narzędzia</h3>
 
       <div className="space-y-2">

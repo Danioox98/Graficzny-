@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { HexColorPicker } from 'react-colorful';
 import { useEditorStore } from '@/utils/store';
+import { LayersPanel } from './LayersPanel';
 
 export const PropertiesPanel: React.FC = () => {
   const { canvas, selectedObjects } = useEditorStore();
@@ -50,18 +51,35 @@ export const PropertiesPanel: React.FC = () => {
 
   if (selectedObjects.length === 0) {
     return (
-      <div className="editor-sidebar-right bg-white p-4">
-        <h3 className="text-lg font-semibold mb-4">Właściwości</h3>
-        <p className="text-gray-500 text-sm">Wybierz obiekt aby edytować jego właściwości</p>
+      <div className="editor-sidebar-right bg-white p-4 space-y-4">
+        <LayersPanel />
+
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Właściwości</h3>
+          <p className="text-gray-500 text-sm">Wybierz obiekt aby edytować jego właściwości</p>
+
+          <div className="mt-6 p-4 bg-blue-50 rounded-lg text-sm text-blue-800">
+            <div className="font-semibold mb-2">💡 Wskazówki:</div>
+            <ul className="text-xs space-y-1">
+              <li>• Kliknij dwukrotnie tekst, żeby go zmienić</li>
+              <li>• Przytrzymaj Shift, żeby proporcjonalnie skalować</li>
+              <li>• Przeciągnij obiekty, żeby je przesunąć</li>
+            </ul>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (selectedObjects.length > 1) {
     return (
-      <div className="editor-sidebar-right bg-white p-4">
-        <h3 className="text-lg font-semibold mb-4">Właściwości</h3>
-        <p className="text-gray-500 text-sm">Wybrano {selectedObjects.length} obiektów</p>
+      <div className="editor-sidebar-right bg-white p-4 space-y-4">
+        <LayersPanel />
+
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Właściwości</h3>
+          <p className="text-gray-500 text-sm">Wybrano {selectedObjects.length} obiektów</p>
+        </div>
       </div>
     );
   }
@@ -70,10 +88,13 @@ export const PropertiesPanel: React.FC = () => {
   const isText = obj.type === 'i-text' || obj.type === 'text' || obj.type === 'textbox';
 
   return (
-    <div className="editor-sidebar-right bg-white p-4">
-      <h3 className="text-lg font-semibold mb-4">Właściwości</h3>
+    <div className="editor-sidebar-right bg-white p-4 space-y-4 overflow-y-auto">
+      <LayersPanel />
 
-      <div className="space-y-4">
+      <div>
+        <h3 className="text-lg font-semibold mb-4">Właściwości</h3>
+
+        <div className="space-y-4">
         {/* Pozycja */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Pozycja</label>
@@ -245,6 +266,7 @@ export const PropertiesPanel: React.FC = () => {
             </div>
           </>
         )}
+        </div>
       </div>
     </div>
   );

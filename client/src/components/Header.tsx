@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { Download, Save, Undo, Redo, ZoomIn, ZoomOut, Grid, ShoppingCart } from 'lucide-react';
+import { Download, Save, Undo, Redo, ZoomIn, ZoomOut, Grid, ShoppingCart, ArrowLeft } from 'lucide-react';
 import { useEditorStore, useCartStore, useUIStore } from '@/utils/store';
 import { ExportDialog } from './ExportDialog';
 
 export const Header: React.FC = () => {
-  const { zoom, setZoom, undo, redo, history, historyIndex, toggleGrid, showGrid, currentProject } = useEditorStore();
+  const { zoom, setZoom, undo, redo, history, historyIndex, toggleGrid, showGrid, currentProduct, setCurrentProduct } = useEditorStore();
   const { items } = useCartStore();
   const { showNotification } = useUIStore();
   const [showExportDialog, setShowExportDialog] = useState(false);
@@ -26,16 +26,31 @@ export const Header: React.FC = () => {
     setShowExportDialog(true);
   };
 
+  const handleBackToTemplates = () => {
+    if (confirm('Czy na pewno chcesz wrócić do wyboru szablonu? Niezapisane zmiany zostaną utracone.')) {
+      setCurrentProduct(null);
+    }
+  };
+
   return (
     <header className="editor-header bg-white px-6 py-3 flex items-center justify-between shadow-sm">
-      {/* Logo */}
+      {/* Logo + Powrót */}
       <div className="flex items-center gap-3">
-        <div className="text-2xl font-bold text-primary-600">
-          🎨 Kreator Graficzny
+        <button
+          onClick={handleBackToTemplates}
+          className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 rounded-lg transition-colors text-gray-700"
+          title="Wróć do wyboru szablonu"
+        >
+          <ArrowLeft size={18} />
+          <span className="hidden sm:inline">Wróć do szablonów</span>
+        </button>
+        <div className="w-px h-6 bg-gray-300" />
+        <div className="text-xl font-bold text-primary-600">
+          🎨 Kreator
         </div>
-        {currentProject && (
+        {currentProduct && (
           <div className="text-sm text-gray-600">
-            {currentProject.name}
+            {currentProduct.name}
           </div>
         )}
       </div>
