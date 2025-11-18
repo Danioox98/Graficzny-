@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { fabric } from 'fabric';
-import { Product, Project, Order, OrderItem } from '@/types';
+import { Product, Project, OrderItem } from '@/types';
 
 interface EditorStore {
   // Canvas

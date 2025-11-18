@@ -36,12 +36,12 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ width, height }) => 
     }
 
     // Event handlery
-    fabricCanvas.on('selection:created', (e) => {
-      setSelectedObjects(e.selected || []);
+    fabricCanvas.on('selection:created', (e: fabric.IEvent) => {
+      setSelectedObjects((e as any).selected || []);
     });
 
-    fabricCanvas.on('selection:updated', (e) => {
-      setSelectedObjects(e.selected || []);
+    fabricCanvas.on('selection:updated', (e: fabric.IEvent) => {
+      setSelectedObjects((e as any).selected || []);
     });
 
     fabricCanvas.on('selection:cleared', () => {
@@ -75,7 +75,7 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ width, height }) => 
       } else {
         // Usuń grid
         const objects = canvas.getObjects().filter((obj: any) => obj.id === 'grid');
-        objects.forEach((obj) => canvas.remove(obj));
+        objects.forEach((obj: fabric.Object) => canvas.remove(obj));
         canvas.renderAll();
       }
     }
@@ -87,7 +87,7 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ width, height }) => 
 
     // Usuń stary grid
     const oldGrid = canvas.getObjects().filter((obj: any) => obj.id === 'grid');
-    oldGrid.forEach((obj) => canvas.remove(obj));
+    oldGrid.forEach((obj: fabric.Object) => canvas.remove(obj));
 
     // Pionowe linie
     for (let i = 0; i <= width; i += gridSize) {
@@ -113,7 +113,8 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ width, height }) => 
       canvas.add(line);
     }
 
-    canvas.sendToBack(...canvas.getObjects().filter((obj: any) => obj.id === 'grid'));
+    const gridObjects = canvas.getObjects().filter((obj: any) => obj.id === 'grid');
+    gridObjects.forEach((obj: fabric.Object) => canvas.sendToBack(obj));
     canvas.renderAll();
   };
 

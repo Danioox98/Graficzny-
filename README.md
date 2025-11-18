@@ -1,40 +1,70 @@
-# 🎨 Kreator Graficzny - System dla Drukarni
+# 🎨 Kreator Graficzny dla Drukarni
 
-Nowoczesny kreator graficzny online do projektowania materiałów drukowanych.
+Profesjonalny kreator graficzny online skupiony na **wizytówkach i banerach** dla drukarni offsetowej.
 
-## 🚀 Funkcje
+## ✨ Funkcje
 
-- **Edytor Drag & Drop** - Intuicyjne przeciąganie i edycja elementów
-- **Szablony** - Gotowe szablony wizytówek, ulotek, plakatów, banerów
-- **Narzędzia Projektowe**:
-  - Teksty z różnymi czcionkami
-  - Upload własnych zdjęć
-  - Kształty geometryczne
-  - Ikony i symbole
-  - Warstwy i grupowanie
-- **Eksport Profesjonalny** - PDF 300 DPI gotowe do druku (CMYK)
-- **Zapisywanie Projektów** - Kontynuuj pracę później
-- **System Zamówień** - Koszyk i integracja z drukarnią
+- ✅ **24 szablony wizytówek** (Business, Creative, Minimal, branżowe)
+- ✅ **9 szablonów banerów** (roll-up i reklamowe)
+- ✅ **Edytor Fabric.js** z pełną kontrolą nad elementami
+- ✅ **Eksport PDF 300 DPI CMYK** z 3mm spadami
+- ✅ **System filtrowania** szablonów po tagach
+- ✅ **Wyszukiwarka** szablonów
+- ✅ **Gotowy do produkcji offsetowej**
 
 ## 📋 Wymagania
 
 - Node.js 18+
 - npm lub yarn
 
-## 🛠️ Instalacja
+## 🚀 Szybki Start (Lokalnie)
+
+### Instalacja
 
 ```bash
-# Instalacja wszystkich zależności
-npm run install:all
+# 1. Sklonuj repozytorium
+git clone <repo-url>
+cd Graficzny-
 
-# Uruchomienie w trybie deweloperskim
+# 2. Zainstaluj zależności dla obu projektów
+cd client && npm install
+cd ../server && npm install
+cd ..
+```
+
+### Uruchomienie
+
+```bash
+# Terminal 1 - Backend (port 3001)
+cd server
+npm run dev
+
+# Terminal 2 - Frontend (port 5173)
+cd client
 npm run dev
 ```
 
-## 🌐 Dostęp
+Otwórz przeglądarkę: **http://localhost:5173**
 
-- **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:3000
+## 📦 Build Produkcyjny
+
+```bash
+# Build frontend
+cd client
+npm run build
+# Wynik w: client/dist/
+
+# Build backend
+cd server
+npm run build
+# Wynik w: server/dist/
+```
+
+## 🌐 Wdrożenie
+
+Zobacz szczegółowe instrukcje wdrożenia w:
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Pełna instrukcja wdrożenia (VPS, Render, Vercel)
+- **[INSTALLATION_NOTES.md](./INSTALLATION_NOTES.md)** - Rozwiązywanie problemów i wymagania systemowe
 
 ## 📦 Struktura Projektu
 
@@ -56,32 +86,114 @@ kreator-graficzny-drukarnia/
 └── shared/          # Wspólne typy TypeScript
 ```
 
-## 🎯 Produkty Drukarskie
+## 🎯 Szablony
 
-1. **Wizytówki** - 85x55mm
-2. **Ulotki** - A4, A5, A6, DL
-3. **Plakaty** - A3, A2, A1, A0
-4. **Banery** - Różne wymiary
-5. **Naklejki** - Okrągłe, prostokątne
-6. **Zaproszenia** - Różne formaty
+### Wizytówki (24 szablony)
+- **Business** (3): Profesjonalne, Eleganckie, Korporacyjne
+- **Creative** (3): Kreatywne, Artystyczne, Designerskie
+- **Minimal** (3): Minimalistyczne, Czyste, Proste
+- **Branżowe** (15):
+  - Tech/IT, Medyczne, Prawnicze, Fotograficzne
+  - Beauty/Uroda, Chef/Gastronomia, Fitness, Nieruchomości
+  - Mechanik, Budowlane, Kwiaciarnia, Księgowość
+  - Ubezpieczenia, Architekt, Rzemieślnik
+
+### Banery (9 szablonów)
+- **Roll-up** (6): Firmowy, Produktowy, Medyczny, Fitness, Salon Urody, Auto Serwis
+- **Reklamowe** (3): Restauracja, Sklep (Wyprzedaż), Nieruchomości
 
 ## 🔧 Konfiguracja
 
-Skopiuj `.env.example` do `.env` i dostosuj ustawienia:
+### Backend (.env)
 
 ```env
-# Server
-PORT=3000
-DATABASE_URL=./database.sqlite
-
-# Client
-VITE_API_URL=http://localhost:3000
-
-# Upload
-MAX_FILE_SIZE=10MB
-ALLOWED_FORMATS=jpg,jpeg,png,svg,pdf
+PORT=3001
+NODE_ENV=development
+CORS_ORIGIN=http://localhost:5173
+DATABASE_PATH=./database.sqlite
+UPLOAD_DIR=./uploads
+MAX_FILE_SIZE=10485760
 ```
 
-## 📝 Licencja
+Więcej opcji w `server/.env.example`
 
-MIT License - Copyright (c) 2024 Drukarnia
+## 📝 Dostępne Skrypty
+
+```bash
+# Root
+npm run dev              # Uruchom oba projekty jednocześnie
+npm run install:all      # Zainstaluj wszystkie zależności
+npm run build           # Build całego projektu
+npm run deploy:build    # Install + Build (gotowe do wdrożenia)
+
+# Client
+npm run dev             # Dev server (Vite)
+npm run build           # Production build
+npm run preview         # Preview production build
+
+# Server
+npm run dev             # Dev server (tsx watch)
+npm run build           # TypeScript compilation
+npm start               # Uruchom build produkcyjny
+```
+
+## 🔒 Opcje Monetyzacji
+
+### Model 1: Darmowy kreator + płatność za druk (ZALECANE)
+- Kreator dostępny dla wszystkich za darmo
+- Zarabiasz na druku zamówionych projektów
+- Brak barier wejścia dla klientów
+
+### Model 2: Sprzedaż dostępu (np. Allegro)
+- Sprzedajesz kody dostępu na Allegro
+- Klient otrzymuje kod i może korzystać z kreatora
+- Implementacja: zobacz `DEPLOYMENT.md` sekcja "Kontrola Dostępu"
+
+### Model 3: Freemium
+- Podstawowe szablony za darmo
+- Premium szablony po opłacie
+- Eksport wysokiej jakości (300 DPI) płatny
+
+## 💡 Koszty Hostingu
+
+**Najtańsza opcja (Render.com):**
+- Backend: Darmowy (z ograniczeniami)
+- Frontend: Darmowy
+- **Koszt: 0 zł/mc**
+
+**Zalecana opcja (VPS):**
+- VPS OVH/home.pl: ~30 zł/mc
+- Domena: ~50 zł/rok (~4 zł/mc)
+- **Koszt: ~34 zł/mc**
+
+## 🎨 Stack Technologiczny
+
+**Frontend:**
+- React 18 + TypeScript
+- Vite
+- Tailwind CSS
+- Fabric.js (canvas)
+- Zustand (state management)
+- Lucide React (ikony)
+
+**Backend:**
+- Node.js + Express
+- TypeScript
+- SQLite (better-sqlite3)
+- PDFKit (eksport PDF 300 DPI CMYK)
+- Multer (upload plików)
+
+## 📞 Wsparcie
+
+W razie problemów:
+1. Sprawdź [INSTALLATION_NOTES.md](./INSTALLATION_NOTES.md)
+2. Sprawdź [DEPLOYMENT.md](./DEPLOYMENT.md)
+3. Sprawdź logi: `pm2 logs` lub `npm run dev`
+
+## 📄 Licencja
+
+MIT
+
+---
+
+**Stworzone dla nowoczesnych drukarni offsetowych z profesjonalnym sprzętem** 🖨️

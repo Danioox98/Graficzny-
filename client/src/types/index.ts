@@ -1,4 +1,5 @@
 export * from '../../../shared/types';
+import { fabric } from 'fabric';
 
 // Frontend-specific types
 export interface EditorState {

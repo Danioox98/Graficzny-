@@ -3,7 +3,6 @@ import { Header } from './components/Header';
 import { Toolbar } from './components/Toolbar';
 import { PropertiesPanel } from './components/PropertiesPanel';
 import { ProductSelector } from './components/ProductSelector';
-import { TemplatesGallery } from './components/TemplatesGallery';
 import { EditorCanvas } from './editor/EditorCanvas';
 import { useEditorStore, useUIStore } from './utils/store';
 

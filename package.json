@@ -8,7 +8,12 @@
     "dev:server": "cd server && npm run dev",
     "install:all": "npm install && cd client && npm install && cd ../server && npm install",
     "build": "cd client && npm run build && cd ../server && npm run build",
-    "start": "cd server && npm start"
+    "build:client": "cd client && npm run build",
+    "build:server": "cd server && npm run build",
+    "start": "cd server && npm start",
+    "test": "cd server && npm test",
+    "deploy:build": "npm run install:all && npm run build",
+    "preview": "cd client && npm run preview"
   },
   "keywords": [
     "drukarnia",

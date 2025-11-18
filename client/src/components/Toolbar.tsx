@@ -5,7 +5,6 @@ import {
   Circle,
   Triangle,
   Minus,
-  Upload,
   Trash2
 } from 'lucide-react';
 import { fabric } from 'fabric';
@@ -103,7 +102,7 @@ export const Toolbar: React.FC = () => {
     const reader = new FileReader();
 
     reader.onload = (event) => {
-      fabric.Image.fromURL(event.target?.result as string, (img) => {
+      fabric.Image.fromURL(event.target?.result as string, (img: fabric.Image) => {
         // Skaluj obraz jeśli jest za duży
         const maxWidth = canvas.width! * 0.5;
         const maxHeight = canvas.height! * 0.5;
@@ -132,7 +131,7 @@ export const Toolbar: React.FC = () => {
 
     const activeObjects = canvas.getActiveObjects();
     if (activeObjects.length) {
-      activeObjects.forEach((obj) => canvas.remove(obj));
+      activeObjects.forEach((obj: fabric.Object) => canvas.remove(obj));
       canvas.discardActiveObject();
       canvas.renderAll();
     }
